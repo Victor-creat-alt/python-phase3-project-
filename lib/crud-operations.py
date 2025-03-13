@@ -1,3 +1,4 @@
+from models import create_airplane
 from models import Airplane, Flight, Passenger, Booking, Airport
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -12,11 +13,7 @@ session = Session()
 
 #CRUD OPERATIONS
 # 1. Create (Insert)
-def create_airplane(model, capacity, airline, manufacture_year):
-    airplane = Airplane(model=model, capacity=capacity, airline=airline, manufacture_year=manufacture_year)
-    session.add(airplane)
-    session.commit()
-    return airplane
+
 
 def create_flight(flight_number, departure_time, arrival_time, destination, airplane_id, airport_id):
     flight = Flight(flight_number=flight_number, departure_time=departure_time, arrival_time=arrival_time, destination=destination, airplane_id=airplane_id, airport_id=airport_id)
@@ -24,12 +21,24 @@ def create_flight(flight_number, departure_time, arrival_time, destination, airp
     session.commit()
     return flight
 
+def create_booking(seat_number, booking_date):
+    booking = Booking(seat_number=seat_number, booking_date=booking_date)
+    session.add(booking)
+    session.commit()
+    return booking
+
 #2. Read(Select)
 def get_all_flights():
     return session.query(Flight).all()
 
 def get_passenger_by_id(passenger_id):
     return session.query(Passenger).filter(Passenger.passenger_id == passenger_id).first()
+
+def get_all_airports():
+    return session.query(Airport).all()
+
+def get_all_bookings():
+    return session.query(Booking).all()
 
 #3. Update(Modify)
 def update_airplane_capacity(airplane_id, new_capacity):
