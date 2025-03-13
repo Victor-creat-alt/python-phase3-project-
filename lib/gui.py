@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import font
+from ttkbootstrap import Style
+from tkinter import ttk
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from models import Base, Flight, Passenger, Booking, Airplane, Airport
+from models import Base, Flight, Booking, Airplane
 
 # Create engine and session
 engine = create_engine('sqlite:///air_travel.db')
@@ -34,80 +35,54 @@ def create_flight_gui():
 
     flight_gui = tk.Tk()
     flight_gui.title("Create Flight")
-    flight_gui.config(bg="#f4f4f4")  # Light gray background
+    flight_gui.geometry("700x600")  # Increase the window size
+    style = Style(theme='flatly')  # Use the flatly theme from ttkbootstrap
 
-    # Set custom fonts
-    header_font = font.Font(family="Helvetica", size=12, weight="bold")
-    entry_font = font.Font(family="Arial", size=10)
+    # Configure window to center elements
+    flight_gui.grid_rowconfigure(0, weight=1)
+    flight_gui.grid_rowconfigure(1, weight=1)
+    flight_gui.grid_rowconfigure(2, weight=1)
+    flight_gui.grid_rowconfigure(3, weight=1)
+    flight_gui.grid_rowconfigure(4, weight=1)
+    flight_gui.grid_rowconfigure(5, weight=1)
 
-    tk.Label(flight_gui, text="Flight Number", font=header_font, bg="#f4f4f4").grid(row=0, sticky="e", padx=10, pady=5)
-    tk.Label(flight_gui, text="Departure Time (YYYY-MM-DD HH:MM)", font=header_font, bg="#f4f4f4").grid(row=1, sticky="e", padx=10, pady=5)
-    tk.Label(flight_gui, text="Arrival Time (YYYY-MM-DD HH:MM)", font=header_font, bg="#f4f4f4").grid(row=2, sticky="e", padx=10, pady=5)
-    tk.Label(flight_gui, text="Destination", font=header_font, bg="#f4f4f4").grid(row=3, sticky="e", padx=10, pady=5)
-    tk.Label(flight_gui, text="Airplane ID", font=header_font, bg="#f4f4f4").grid(row=4, sticky="e", padx=10, pady=5)
+    flight_gui.grid_columnconfigure(0, weight=1)
+    flight_gui.grid_columnconfigure(1, weight=3)
 
-    flight_number_entry = tk.Entry(flight_gui, font=entry_font)
-    departure_time_entry = tk.Entry(flight_gui, font=entry_font)
-    arrival_time_entry = tk.Entry(flight_gui, font=entry_font)
-    destination_entry = tk.Entry(flight_gui, font=entry_font)
-    airplane_id_entry = tk.Entry(flight_gui, font=entry_font)
+    header_font = ("Helvetica", 20)  # Increased font size for title
+    entry_font = ("Helvetica", 16)  # Increased font size for entries
+    button_font = ("Helvetica", 16)  # Increased font size for button
 
-    flight_number_entry.grid(row=0, column=1, padx=10, pady=5)
-    departure_time_entry.grid(row=1, column=1, padx=10, pady=5)
-    arrival_time_entry.grid(row=2, column=1, padx=10, pady=5)
-    destination_entry.grid(row=3, column=1, padx=10, pady=5)
-    airplane_id_entry.grid(row=4, column=1, padx=10, pady=5)
+    # Labels
+    ttk.Label(flight_gui, text="Flight Number", font=header_font).grid(row=0, sticky="e", padx=20, pady=10)
+    ttk.Label(flight_gui, text="Departure Time (YYYY-MM-DD HH:MM)", font=header_font).grid(row=1, sticky="e", padx=20, pady=10)
+    ttk.Label(flight_gui, text="Arrival Time (YYYY-MM-DD HH:MM)", font=header_font).grid(row=2, sticky="e", padx=20, pady=10)
+    ttk.Label(flight_gui, text="Destination", font=header_font).grid(row=3, sticky="e", padx=20, pady=10)
+    ttk.Label(flight_gui, text="Airplane ID", font=header_font).grid(row=4, sticky="e", padx=20, pady=10)
 
-    tk.Button(flight_gui, text="Submit", command=submit, bg="#4CAF50", fg="white", font=header_font).grid(row=5, columnspan=2, pady=15)
+    # Entry fields (increased size)
+    flight_number_entry = ttk.Entry(flight_gui, font=entry_font, width=30)
+    departure_time_entry = ttk.Entry(flight_gui, font=entry_font, width=30)
+    arrival_time_entry = ttk.Entry(flight_gui, font=entry_font, width=30)
+    destination_entry = ttk.Entry(flight_gui, font=entry_font, width=30)
+    airplane_id_entry = ttk.Entry(flight_gui, font=entry_font, width=30)
+
+    # Position entry fields
+    flight_number_entry.grid(row=0, column=1, padx=20, pady=10)
+    departure_time_entry.grid(row=1, column=1, padx=20, pady=10)
+    arrival_time_entry.grid(row=2, column=1, padx=20, pady=10)
+    destination_entry.grid(row=3, column=1, padx=20, pady=10)
+    airplane_id_entry.grid(row=4, column=1, padx=20, pady=10)
+
+    # Submit button (using tk.Button)
+    tk.Button(flight_gui, text="Submit", command=submit, width=25, font=button_font).grid(row=5, columnspan=2, pady=20)
+
+    # Set the background color to blue
+    flight_gui.config(bg="blue")
 
     flight_gui.mainloop()
 
-# Function to create a Passenger GUI with added styling
-def create_passenger_gui():
-    def submit():
-        first_name = first_name_entry.get()
-        last_name = last_name_entry.get()
-        passport_number = passport_number_entry.get()
-        email = email_entry.get()
-
-        passenger = Passenger(
-            first_name=first_name,
-            last_name=last_name,
-            passport_number=passport_number,
-            email=email
-        )
-
-        session.add(passenger)
-        session.commit()
-        messagebox.showinfo("Success", "The passenger has been added successfully")
-
-    passenger_gui = tk.Tk()
-    passenger_gui.title("Create Passenger")
-    passenger_gui.config(bg="#f4f4f4")
-
-    header_font = font.Font(family="Helvetica", size=12, weight="bold")
-    entry_font = font.Font(family="Arial", size=10)
-
-    tk.Label(passenger_gui, text="First Name", font=header_font, bg="#f4f4f4").grid(row=0, sticky="e", padx=10, pady=5)
-    tk.Label(passenger_gui, text="Last Name", font=header_font, bg="#f4f4f4").grid(row=1, sticky="e", padx=10, pady=5)
-    tk.Label(passenger_gui, text="Passport Number", font=header_font, bg="#f4f4f4").grid(row=2, sticky="e", padx=10, pady=5)
-    tk.Label(passenger_gui, text="Email", font=header_font, bg="#f4f4f4").grid(row=3, sticky="e", padx=10, pady=5)
-
-    first_name_entry = tk.Entry(passenger_gui, font=entry_font)
-    last_name_entry = tk.Entry(passenger_gui, font=entry_font)
-    passport_number_entry = tk.Entry(passenger_gui, font=entry_font)
-    email_entry = tk.Entry(passenger_gui, font=entry_font)
-
-    first_name_entry.grid(row=0, column=1, padx=10, pady=5)
-    last_name_entry.grid(row=1, column=1, padx=10, pady=5)
-    passport_number_entry.grid(row=2, column=1, padx=10, pady=5)
-    email_entry.grid(row=3, column=1, padx=10, pady=5)
-
-    tk.Button(passenger_gui, text="Submit", command=submit, bg="#4CAF50", fg="white", font=header_font).grid(row=4, columnspan=2, pady=15)
-
-    passenger_gui.mainloop()
-
-# Function to create Booking GUI with added styling
+# Function to create a Booking GUI with added styling
 def create_booking_gui():
     def submit():
         flight_id = flight_id_entry.get()
@@ -124,35 +99,55 @@ def create_booking_gui():
 
         session.add(booking)
         session.commit()
-        messagebox.showinfo("Success", "The booking has been done successfully")
+        messagebox.showinfo("Success", "The booking has been made successfully")
 
     booking_gui = tk.Tk()
     booking_gui.title("Create Booking")
-    booking_gui.config(bg="#f4f4f4")
+    booking_gui.geometry("700x600")  # Increase the window size
+    style = Style(theme='flatly')  # Use the flatly theme from ttkbootstrap
 
-    header_font = font.Font(family="Helvetica", size=12, weight="bold")
-    entry_font = font.Font(family="Arial", size=10)
+    # Configure window to center elements
+    booking_gui.grid_rowconfigure(0, weight=1)
+    booking_gui.grid_rowconfigure(1, weight=1)
+    booking_gui.grid_rowconfigure(2, weight=1)
+    booking_gui.grid_rowconfigure(3, weight=1)
+    booking_gui.grid_rowconfigure(4, weight=1)
+    booking_gui.grid_rowconfigure(5, weight=1)
 
-    tk.Label(booking_gui, text="Flight ID", font=header_font, bg="#f4f4f4").grid(row=0, sticky="e", padx=10, pady=5)
-    tk.Label(booking_gui, text="Passenger ID", font=header_font, bg="#f4f4f4").grid(row=1, sticky="e", padx=10, pady=5)
-    tk.Label(booking_gui, text="Seat Number", font=header_font, bg="#f4f4f4").grid(row=2, sticky="e", padx=10, pady=5)
-    tk.Label(booking_gui, text="Booking Date (YYYY-MM-DD HH:MM)", font=header_font, bg="#f4f4f4").grid(row=3, sticky="e", padx=10, pady=5)
+    booking_gui.grid_columnconfigure(0, weight=1)
+    booking_gui.grid_columnconfigure(1, weight=3)
 
-    flight_id_entry = tk.Entry(booking_gui, font=entry_font)
-    passenger_id_entry = tk.Entry(booking_gui, font=entry_font)
-    seat_number_entry = tk.Entry(booking_gui, font=entry_font)
-    booking_date_entry = tk.Entry(booking_gui, font=entry_font)
+    header_font = ("Helvetica", 20)  # Increased font size for title
+    entry_font = ("Helvetica", 16)  # Increased font size for entries
+    button_font = ("Helvetica", 16)  # Increased font size for button
 
-    flight_id_entry.grid(row=0, column=1, padx=10, pady=5)
-    passenger_id_entry.grid(row=1, column=1, padx=10, pady=5)
-    seat_number_entry.grid(row=2, column=1, padx=10, pady=5)
-    booking_date_entry.grid(row=3, column=1, padx=10, pady=5)
+    # Labels
+    ttk.Label(booking_gui, text="Flight ID", font=header_font).grid(row=0, sticky="e", padx=20, pady=10)
+    ttk.Label(booking_gui, text="Passenger ID", font=header_font).grid(row=1, sticky="e", padx=20, pady=10)
+    ttk.Label(booking_gui, text="Seat Number", font=header_font).grid(row=2, sticky="e", padx=20, pady=10)
+    ttk.Label(booking_gui, text="Booking Date (YYYY-MM-DD HH:MM)", font=header_font).grid(row=3, sticky="e", padx=20, pady=10)
 
-    tk.Button(booking_gui, text="Submit", command=submit, bg="#4CAF50", fg="white", font=header_font).grid(row=4, columnspan=2, pady=15)
+    # Entry fields (increased size)
+    flight_id_entry = ttk.Entry(booking_gui, font=entry_font, width=30)
+    passenger_id_entry = ttk.Entry(booking_gui, font=entry_font, width=30)
+    seat_number_entry = ttk.Entry(booking_gui, font=entry_font, width=30)
+    booking_date_entry = ttk.Entry(booking_gui, font=entry_font, width=30)
+
+    # Position entry fields
+    flight_id_entry.grid(row=0, column=1, padx=20, pady=10)
+    passenger_id_entry.grid(row=1, column=1, padx=20, pady=10)
+    seat_number_entry.grid(row=2, column=1, padx=20, pady=10)
+    booking_date_entry.grid(row=3, column=1, padx=20, pady=10)
+
+    # Submit button (using tk.Button)
+    tk.Button(booking_gui, text="Submit", command=submit, width=25, font=button_font).grid(row=4, columnspan=2, pady=20)
+
+    # Set the background color to blue
+    booking_gui.config(bg="blue")
 
     booking_gui.mainloop()
 
-# Function to create Airplane GUI with added styling
+# Function to create an Airplane GUI with added styling
 def create_airplane_gui():
     def submit():
         model = model_entry.get()
@@ -169,84 +164,54 @@ def create_airplane_gui():
 
         session.add(airplane)
         session.commit()
-        messagebox.showinfo("Success", "The Airplane has been created successfully")
+        messagebox.showinfo("Success", "The airplane has been created successfully")
 
     airplane_gui = tk.Tk()
     airplane_gui.title("Create Airplane")
-    airplane_gui.config(bg="#f4f4f4")
+    airplane_gui.geometry("700x600")  # Increase the window size
+    style = Style(theme='flatly')  # Use the flatly theme from ttkbootstrap
 
-    header_font = font.Font(family="Helvetica", size=12, weight="bold")
-    entry_font = font.Font(family="Arial", size=10)
+    # Configure window to center elements
+    airplane_gui.grid_rowconfigure(0, weight=1)
+    airplane_gui.grid_rowconfigure(1, weight=1)
+    airplane_gui.grid_rowconfigure(2, weight=1)
+    airplane_gui.grid_rowconfigure(3, weight=1)
+    airplane_gui.grid_rowconfigure(4, weight=1)
+    airplane_gui.grid_rowconfigure(5, weight=1)
 
-    tk.Label(airplane_gui, text="Model", font=header_font, bg="#f4f4f4").grid(row=0, sticky="e", padx=10, pady=5)
-    tk.Label(airplane_gui, text="Capacity", font=header_font, bg="#f4f4f4").grid(row=1, sticky="e", padx=10, pady=5)
-    tk.Label(airplane_gui, text="Airline", font=header_font, bg="#f4f4f4").grid(row=2, sticky="e", padx=10, pady=5)
-    tk.Label(airplane_gui, text="Manufacture Year", font=header_font, bg="#f4f4f4").grid(row=3, sticky="e", padx=10, pady=5)
+    airplane_gui.grid_columnconfigure(0, weight=1)
+    airplane_gui.grid_columnconfigure(1, weight=3)
 
-    model_entry = tk.Entry(airplane_gui, font=entry_font)
-    capacity_entry = tk.Entry(airplane_gui, font=entry_font)
-    airline_entry = tk.Entry(airplane_gui, font=entry_font)
-    manufacture_year_entry = tk.Entry(airplane_gui, font=entry_font)
+    header_font = ("Helvetica", 20)  # Increased font size for title
+    entry_font = ("Helvetica", 16)  # Increased font size for entries
+    button_font = ("Helvetica", 16)  # Increased font size for button
 
-    model_entry.grid(row=0, column=1, padx=10, pady=5)
-    capacity_entry.grid(row=1, column=1, padx=10, pady=5)
-    airline_entry.grid(row=2, column=1, padx=10, pady=5)
-    manufacture_year_entry.grid(row=3, column=1, padx=10, pady=5)
+    # Labels
+    ttk.Label(airplane_gui, text="Model", font=header_font).grid(row=0, sticky="e", padx=20, pady=10)
+    ttk.Label(airplane_gui, text="Capacity", font=header_font).grid(row=1, sticky="e", padx=20, pady=10)
+    ttk.Label(airplane_gui, text="Airline", font=header_font).grid(row=2, sticky="e", padx=20, pady=10)
+    ttk.Label(airplane_gui, text="Manufacture Year", font=header_font).grid(row=3, sticky="e", padx=20, pady=10)
 
-    tk.Button(airplane_gui, text="Submit", command=submit, bg="#4CAF50", fg="white", font=header_font).grid(row=4, columnspan=2, pady=15)
+    # Entry fields (increased size)
+    model_entry = ttk.Entry(airplane_gui, font=entry_font, width=30)
+    capacity_entry = ttk.Entry(airplane_gui, font=entry_font, width=30)
+    airline_entry = ttk.Entry(airplane_gui, font=entry_font, width=30)
+    manufacture_year_entry = ttk.Entry(airplane_gui, font=entry_font, width=30)
+
+    # Position entry fields
+    model_entry.grid(row=0, column=1, padx=20, pady=10)
+    capacity_entry.grid(row=1, column=1, padx=20, pady=10)
+    airline_entry.grid(row=2, column=1, padx=20, pady=10)
+    manufacture_year_entry.grid(row=3, column=1, padx=20, pady=10)
+
+    # Submit button (using tk.Button)
+    tk.Button(airplane_gui, text="Submit", command=submit, width=25, font=button_font).grid(row=4, columnspan=2, pady=20)
+
+    # Set the background color to blue
+    airplane_gui.config(bg="blue")
 
     airplane_gui.mainloop()
 
-# Function to create Airport GUI with added styling
-def create_airport_gui():
-    def submit():
-        name = name_entry.get()
-        location = location_entry.get()
-        code = code_entry.get()
-        capacity = capacity_entry.get()
-
-        airport = Airport(
-            name=name,
-            location=location,
-            code=code,
-            capacity=capacity
-        )
-
-        session.add(airport)
-        session.commit()
-        messagebox.showinfo("Success", "The Airport has been created successfully")
-
-    airport_gui = tk.Tk()
-    airport_gui.title("Create Airport")
-    airport_gui.config(bg="#f4f4f4")
-
-    header_font = font.Font(family="Helvetica", size=12, weight="bold")
-    entry_font = font.Font(family="Arial", size=10)
-
-    tk.Label(airport_gui, text="Name", font=header_font, bg="#f4f4f4").grid(row=0, sticky="e", padx=10, pady=5)
-    tk.Label(airport_gui, text="Location", font=header_font, bg="#f4f4f4").grid(row=1, sticky="e", padx=10, pady=5)
-    tk.Label(airport_gui, text="Code", font=header_font, bg="#f4f4f4").grid(row=2, sticky="e", padx=10, pady=5)
-    tk.Label(airport_gui, text="Capacity", font=header_font, bg="#f4f4f4").grid(row=3, sticky="e", padx=10, pady=5)
-
-    name_entry = tk.Entry(airport_gui, font=entry_font)
-    location_entry = tk.Entry(airport_gui, font=entry_font)
-    code_entry = tk.Entry(airport_gui, font=entry_font)
-    capacity_entry = tk.Entry(airport_gui, font=entry_font)
-
-    name_entry.grid(row=0, column=1, padx=10, pady=5)
-    location_entry.grid(row=1, column=1, padx=10, pady=5)
-    code_entry.grid(row=2, column=1, padx=10, pady=5)
-    capacity_entry.grid(row=3, column=1, padx=10, pady=5)
-
-    tk.Button(airport_gui, text="Submit", command=submit, bg="#4CAF50", fg="white", font=header_font).grid(row=4, columnspan=2, pady=15)
-
-    airport_gui.mainloop()
-
 if __name__ == "__main__":
-    # Uncomment the function you want to run
-    create_flight_gui()
-    # create_airplane_gui()
-    # create_booking_gui()
-    # create_passenger_gui()
-    # create_airport_gui()
-
+    create_flight_gui()  # Call this function to create the Flight GUI
+    # You can also call create_booking_gui() or create_airplane_gui() similarly based on what you want to open.

@@ -1,8 +1,8 @@
 """added a air_travel.db
 
-Revision ID: 9619d7873888
+Revision ID: 3b2e59b1753c
 Revises: 
-Create Date: 2025-03-13 11:28:07.706941
+Create Date: 2025-03-13 12:20:28.585112
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9619d7873888'
+revision: str = '3b2e59b1753c'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
