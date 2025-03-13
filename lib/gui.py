@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import font
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from data import Base, Flight, Passenger, Booking, Airplane, Airport
+from models import Base, Flight, Passenger, Booking, Airplane, Airport
 
 # Create engine and session
 engine = create_engine('sqlite:///air_travel.db')

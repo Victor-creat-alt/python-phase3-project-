@@ -1,77 +1,64 @@
-from data import Airplane, Flight, Passenger, Booking, Airport
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import DateTime, ForeignKey, Column, Integer, String, Table
+from datetime import datetime, timezone
 
-#DATABASE URL
-DATABASE_URL = "sqlite:///air_travel.db"
+Base = declarative_base()
 
-#Create an engine and a seesion
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
+# ASSOCIATION TABLE
+PassengerFlightAssociation = Table(
+    'passenger_flight_association', Base.metadata,
+    Column('passenger_id', Integer, ForeignKey('passengers.passenger_id')),
+    Column('flight_id', Integer, ForeignKey('flights.flight_id'))
+)
 
-#CRUD OPERATIONS
-# 1. Create (Insert)
-def create_airplane(model, capacity, airline, manufacture_year):
-    airplane = Airplane(model=model, capacity=capacity, airline=airline, manufacture_year=manufacture_year)
-    session.add(airplane)
-    session.commit()
-    return airplane
+class Airplane(Base):
+    __tablename__ = 'airplanes'
+    airplane_id = Column(Integer, primary_key=True)
+    model = Column(String, nullable=False)
+    capacity = Column(Integer, nullable=False)
+    airline = Column(String, nullable=False)
+    manufacture_year = Column(Integer, nullable=False)
+    flights = relationship('Flight', back_populates='airplane')
 
-def create_flight(flight_number, departure_time, arrival_time, destination, airplane_id, airport_id):
-    flight = Flight(flight_number=flight_number, departure_time=departure_time, arrival_time=arrival_time, destination=destination, airplane_id=airplane_id, airport_id=airport_id)
-    session.add(flight)
-    session.commit()
-    return flight
+class Flight(Base):
+    __tablename__ = 'flights'
+    flight_id = Column(Integer, primary_key=True)
+    flight_number = Column(String, nullable=False)
+    departure_time = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    arrival_time = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    destination = Column(String, nullable=False)
+    airplane_id = Column(Integer, ForeignKey('airplanes.airplane_id'))
+    airport_id = Column(Integer, ForeignKey('airports.airport_id'))
+    airplane = relationship("Airplane", back_populates='flights')
+    airport = relationship("Airport", back_populates='flights')
+    bookings = relationship("Booking", back_populates="flight")
+    passengers = relationship("Passenger", secondary=PassengerFlightAssociation, back_populates='flights')
 
-#2. Read(Select)
-def get_all_flights():
-    return session.query(Flight).all()
+class Passenger(Base):
+    __tablename__ = 'passengers'
+    passenger_id = Column(Integer, primary_key=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    passport_number = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    bookings = relationship("Booking", back_populates='passenger')
+    flights = relationship('Flight', secondary=PassengerFlightAssociation, back_populates='passengers')
 
-def get_passenger_by_id(passenger_id):
-    return session.query(Passenger).filter(Passenger.passenger_id == passenger_id).first()
+class Booking(Base):
+    __tablename__ = 'bookings'
+    booking_id = Column(Integer, primary_key=True)
+    flight_id = Column(Integer, ForeignKey('flights.flight_id'))
+    passenger_id = Column(Integer, ForeignKey('passengers.passenger_id'))
+    seat_number = Column(String, nullable=False)
+    booking_date = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    flight = relationship('Flight', back_populates='bookings')
+    passenger = relationship('Passenger', back_populates='bookings')
 
-#3. Update(Modify)
-def update_airplane_capacity(airplane_id, new_capacity):
-    airplane = session.query(Airplane).filter(Airplane.airplane_id==airplane_id).first()
-    if airplane:
-        airplane.capacity = new_capacity
-        session.commit()
-        return airplane
-    return None
-
-#4. Delete(Remove)
-def delete_booking(booking_id):
-    booking = session.query(Booking).filter(Booking.booking_id == booking_id).first()
-    if booking:
-        session.delete(booking)
-        session.commit()
-        return True
-    return False
-
-if __name__ == "__main__":
-    #Create new airplane
-    new_airplane = create_airplane("Boeing 777", 250, "Airline C", 2020)
-    print(f"Created new airplane: {new_airplane.model}, Capacity: {new_airplane.capacity}")
-
-    #Get all flights
-    flights = get_all_flights()
-    for flight in flights:
-         print(f"Flight: {flight.flight_number} - {flight.destination}")
-
-    #Update airplane capacity
-    update_airplane = update_airplane_capacity(new_airplane.airplane_id, 300)
-    print(f"Updated airplane capacity: {update_airplane.capacity}")    
-
-    #Delete a booking
-    deleted = delete_booking(1)
-    print(f"Booking deleted: {deleted}")
-
-    #Close session
-    session.close()
-
-print("No error in models.py")
-
-
-
-
+class Airport(Base):
+    __tablename__ = 'airports'
+    airport_id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    code = Column(String, nullable=False)
+    capacity = Column(Integer, nullable=False)
+    flights = relationship('Flight', back_populates="airport")

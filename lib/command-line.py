@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from data import Base, Flight, Airport, Booking, Passenger, Airplane
+from models import Base, Flight, Airport, Booking, Passenger, Airplane
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 

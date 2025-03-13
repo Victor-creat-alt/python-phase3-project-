@@ -1,7 +1,7 @@
 import ipdb
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from data import Base, Airplane, Flight, Passenger, Booking, Airport  # Make sure to import your models
+from models import Base, Airplane, Flight, Passenger, Booking, Airport  # Make sure to import your models
 from datetime import datetime
 
 # Database URL - Change it to your own database URL
