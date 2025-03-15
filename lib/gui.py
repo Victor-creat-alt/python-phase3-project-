@@ -5,6 +5,7 @@ from tkinter import ttk
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from models import Base, Flight, Booking, Airplane
+from datetime import datetime  # Import datetime module
 
 # Create engine and session
 engine = create_engine('sqlite:///air_travel.db')
@@ -16,10 +17,18 @@ session = Session()
 def create_flight_gui():
     def submit():
         flight_number = flight_number_entry.get()
-        departure_time = departure_time_entry.get()
-        arrival_time = arrival_time_entry.get()
+        departure_time_str = departure_time_entry.get()
+        arrival_time_str = arrival_time_entry.get()
         destination = destination_entry.get()
         airplane_id = airplane_id_entry.get()
+
+        try:
+            # Convert the departure and arrival times to datetime objects
+            departure_time = datetime.strptime(departure_time_str, "%Y-%m-%d %H:%M")
+            arrival_time = datetime.strptime(arrival_time_str, "%Y-%m-%d %H:%M")
+        except ValueError:
+            messagebox.showerror("Error", "Invalid date format. Please use YYYY-MM-DD HH:MM.")
+            return
 
         flight = Flight(
             flight_number=flight_number,
@@ -88,7 +97,14 @@ def create_booking_gui():
         flight_id = flight_id_entry.get()
         passenger_id = passenger_id_entry.get()
         seat_number = seat_number_entry.get()
-        booking_date = booking_date_entry.get()
+        booking_date_str = booking_date_entry.get()
+
+        try:
+            # Convert the booking date to a datetime object
+            booking_date = datetime.strptime(booking_date_str, "%Y-%m-%d %H:%M")
+        except ValueError:
+            messagebox.showerror("Error", "Invalid date format. Please use YYYY-MM-DD HH:MM.")
+            return
 
         booking = Booking(
             flight_id=flight_id,
