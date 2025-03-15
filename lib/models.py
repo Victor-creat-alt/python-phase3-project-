@@ -34,7 +34,7 @@ class Airplane(Base):
     #An airplane can have several flights
     flights = relationship('Flight', back_populates='airplane')
     #One to one relationship
-    captain = relationship('Captain', back_populates='airplane', uselist=False)
+    captains = relationship('Captain', back_populates='airplane')
 
 class Flight(Base):
     __tablename__ = 'flights'
