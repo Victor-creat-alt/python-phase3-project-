@@ -11,6 +11,18 @@ PassengerFlightAssociation = Table(
     Column('flight_id', Integer, ForeignKey('flights.flight_id'))
 )
 
+class Captain(Base):
+    __tablename__ = 'captains'
+    captain_id = Column(Integer, primary_key=True)
+    first_name = Column(String, nullable=False)
+    last_name=Column(String, nullable=False)
+    license_number=Column(String, nullable=False, unique=True)
+    #A ONE TO ONE RELATIONSHIP
+    #A Captain can only have its own airplane
+    airplane_id = Column(Integer, ForeignKey('airplanes.airplane_id'))
+    airplane = relationship('Airplane', back_populates='captains')
+
+
 class Airplane(Base):
     __tablename__ = 'airplanes'
     airplane_id = Column(Integer, primary_key=True)
@@ -21,20 +33,8 @@ class Airplane(Base):
     #One to Many Relationship
     #An airplane can have several flights
     flights = relationship('Flight', back_populates='airplane')
-    #A ONE TO ONE RELATIONSHIP
-   #An Airplane can only have its own maintenance record
-    maintenance_record = relationship('MaintenanceRecord', back_populates='airplane', uselist=False)
-
-class MaintenanceRecord(Base):
-    __tablename__ = "maintenance_records"
-    maintenance_id = Column(Integer, primary_key=True)
-    airplane_id = Column(Integer, ForeignKey("airplanes.airplane_id"))
-    last_maintenance_date = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    next_due_maintenance_date = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-     #A ONE TO ONE RELATIONSHIP
-   #A Maintenance record only belongs to an Airplane
-    airplane = relationship('Airplane', back_populates='maintenance_record')
-
+    #One to one relationship
+    captain = relationship('Captain', back_populates='airplane', uselist=False)
 
 class Flight(Base):
     __tablename__ = 'flights'

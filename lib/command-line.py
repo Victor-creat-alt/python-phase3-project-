@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base, Airplane, Flight, Passenger, Booking, Airport, MaintenanceRecord
+from models import Base, Airplane, Flight, Passenger, Booking, Airport
 from datetime import datetime
 
 # Setting up the database connection and session
@@ -18,7 +18,7 @@ def main_menu():
         print("3. Manage Bookings")
         print("4. Manage Airplanes")
         print("5. Manage Airports")
-        print("6. Manage Maintenance Records")
+        print("6. Manage Captains")
         print("7. Exit")
         option = input("Enter option:")
         if option == '1':
@@ -32,8 +32,6 @@ def main_menu():
         elif option == '5':
             airports_menu()
         elif option == '6':
-            maintenance_records_menu()
-        elif option == '7':
             break
         else:
             print('Invalid choice. Please try again.')
@@ -118,9 +116,7 @@ def passengers_menu():
         print("3. Find Passenger by ID")
         print("4. Return to Main Menu")
         choice = input("Enter a choice:")
-        if choice == '1':
-            create_passenger()
-        elif choice == '2':
+        if choice == '2':
             display_all_passengers()
         elif choice == '3':
             find_passenger_by_id()
@@ -129,18 +125,6 @@ def passengers_menu():
         else:
             print('Invalid choice. Please try again.')
 
-# Create Passenger
-def create_passenger():
-    first_name = input("Enter first name:")
-    last_name = input("Enter last name:")
-    passport_number = input("Enter passport number:")
-    email = input("Enter email:")
-
-    passenger = Passenger(first_name=first_name, last_name=last_name, passport_number=passport_number, email=email)
-    
-    session.add(passenger)
-    session.commit()
-    print("The passenger has been created successfully.")
 
 # Display All Passengers
 def display_all_passengers():
@@ -313,57 +297,6 @@ def find_airport_by_id():
     else:
         print("The airport is unavailable.")
 
-# Maintenance Records Menu
-def maintenance_records_menu():
-    while True:
-        print("\nMaintenance Records Menu")
-        print("1. Create Maintenance Record")
-        print("2. Display All Maintenance Records")
-        print("3. Find Maintenance Record by Airplane ID")
-        print("4. Return to Main Menu")
-        choice = input("Enter a choice:")
-        if choice == '1':
-            create_maintenance_record()
-        elif choice == '2':
-            display_all_maintenance_records()
-        elif choice == '3':
-            find_maintenance_record_by_airplane_id()
-        elif choice == '4':
-            break
-        else:
-            print('Invalid choice. Please try again.')
-
-# Create Maintenance Record
-def create_maintenance_record():
-    airplane_id = input("Enter airplane ID:")
-    last_maintenance_date = datetime.now()
-    next_due_maintenance_date = input("Enter next due maintenance date (YYYY-MM-DD HH:MM):")
-    next_due_maintenance_date = datetime.strptime(next_due_maintenance_date, "%Y-%m-%d %H:%M")
-
-    maintenance_record = MaintenanceRecord(
-        airplane_id=airplane_id,
-        last_maintenance_date=last_maintenance_date,
-        next_due_maintenance_date=next_due_maintenance_date
-    )
-    
-    session.add(maintenance_record)
-    session.commit()
-    print("The maintenance record has been created successfully.")
-
-# Display All Maintenance Records
-def display_all_maintenance_records():
-    maintenance_records = session.query(MaintenanceRecord).all()
-    for record in maintenance_records:
-        print(f"ID: {record.maintenance_id}, Airplane ID: {record.airplane_id}, Last Maintenance Date: {record.last_maintenance_date}, Next Due: {record.next_due_maintenance_date}")
-
-# Find Maintenance Record by Airplane ID
-def find_maintenance_record_by_airplane_id():
-    airplane_id = input("Enter Airplane ID to find maintenance record:")
-    record = session.query(MaintenanceRecord).filter_by(airplane_id=airplane_id).first()
-    if record:
-        print(f"ID: {record.maintenance_id}, Airplane ID: {record.airplane_id}, Last Maintenance Date: {record.last_maintenance_date}, Next Due: {record.next_due_maintenance_date}")
-    else:
-        print("Maintenance record not found.")
-
 if __name__ == '__main__':
     main_menu()
+    

@@ -1,5 +1,5 @@
 from models import create_airplane
-from models import Airplane, Flight, Passenger, Booking, Airport
+from models import Airplane, Flight, Passenger, Booking, Airport, Captain
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
@@ -33,6 +33,9 @@ def get_all_flights():
 
 def get_passenger_by_id(passenger_id):
     return session.query(Passenger).filter(Passenger.passenger_id == passenger_id).first()
+
+def get_captain_by_id(captain_id):
+    return session.query(Captain).filter(Captain.captain_id == captain_id).first()
 
 def get_all_airports():
     return session.query(Airport).all()
